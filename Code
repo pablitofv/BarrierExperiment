@@ -1,0 +1,48 @@
+#include <TimeLib.h>
+#include <Servo.h>
+#define echoPin 7
+#define trigPin 8
+#define LEDPin 12
+
+
+Servo barrera;
+int pos = 0;
+long duration, distance, wait, empty, last;
+
+
+void setup() {
+
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(LEDPin, OUTPUT);
+  barrera.attach(9);
+}
+
+void loop() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration / 58.2;
+
+  Serial.print(distance);
+  Serial.println("cm");
+  long nowtime = now();
+
+  if (distance >= 10 || distance <= 5) {
+     digitalWrite(LEDPin, LOW);
+     barrera.write(0);
+    }
+  else {
+    digitalWrite(LEDPin, HIGH);
+    barrera.write(90);
+
+  }
+
+  last = nowtime;
+  delay(100);
+}
